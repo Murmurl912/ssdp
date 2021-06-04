@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 public class BroadcastServer {
     public final InetAddress DEFAULT_MULTICAST_ADDRESS = InetAddress.getByName("228.5.6.7");
     public final int DEFAULT_MULTICAST_PORT = 1900;
-    public final InetSocketAddress DEFAULT_MULTICAST_GROUP =
-            new InetSocketAddress(DEFAULT_MULTICAST_ADDRESS, DEFAULT_MULTICAST_PORT);
     private MulticastSocket socket;
     private ScheduledExecutorService executor;
 
@@ -71,7 +69,7 @@ public class BroadcastServer {
         String message = new Date().toString() + "\n" + set.stream().map(InetAddress::getHostAddress)
                 .collect(Collectors.joining("\n"));
         byte[] data = message.getBytes(StandardCharsets.UTF_8);
-        DatagramPacket packet = new DatagramPacket(data, data.length, DEFAULT_MULTICAST_GROUP);
+        DatagramPacket packet = new DatagramPacket(data, data.length, DEFAULT_MULTICAST_ADDRESS, DEFAULT_MULTICAST_PORT);
         socket.send(packet);
     }
 
@@ -87,7 +85,7 @@ public class BroadcastServer {
 
     private void receive() throws IOException {
         byte[] data = new byte[65536];
-        DatagramPacket packet = new DatagramPacket(data, data.length, DEFAULT_MULTICAST_GROUP);
+        DatagramPacket packet = new DatagramPacket(data, data.length);
         socket.receive(packet);
         System.out.println("\nReceived: " + packet.getAddress().getHostAddress() + "\n" + new String(packet.getData(), packet.getOffset(), packet.getLength()));
     }
