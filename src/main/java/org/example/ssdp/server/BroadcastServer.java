@@ -34,7 +34,7 @@ public class BroadcastServer {
         }
         executor = Executors.newScheduledThreadPool(8);
         socket = new MulticastSocket(DEFAULT_MULTICAST_PORT);
-        socket.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, false);
+        socket.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, true);
         socket.joinGroup(DEFAULT_MULTICAST_ADDRESS);
     }
 
@@ -89,7 +89,7 @@ public class BroadcastServer {
         byte[] data = new byte[65536];
         DatagramPacket packet = new DatagramPacket(data, data.length, DEFAULT_MULTICAST_GROUP);
         socket.receive(packet);
-        System.out.println("    Received: \n" + new String(packet.getData(), packet.getOffset(), packet.getLength()));
+        System.out.println("\nReceived: " + packet.getAddress().getHostAddress() + "\n" + new String(packet.getData(), packet.getOffset(), packet.getLength()));
     }
 
     public void stop() throws InterruptedException {
